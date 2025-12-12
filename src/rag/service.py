@@ -16,6 +16,9 @@ from src.core.config import (
     CHAT_MODEL,
 )
 
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+
 # from src.rag.pdf_parser import PDFParser
 
 
@@ -108,22 +111,35 @@ class RagService:
     # 3. QA 推理
     # -----------------------------
     def ask(self, query: str) -> str:
-        """纯 RAG 推理（retriever + LLM prompt）"""
+        """使用 LCEL 完成检索增强问答"""
 
-        docs = self.search(query)
-        context = "\n\n".join([d.page_content for d in docs])
+        prompt = ChatPromptTemplate.from_template(
+            """
+你是一名专业的知识问答助手。请严格基于提供的上下文回答用户问题，
+不能添加不存在的内容。如果答案无法从上下文中找到，请明确告知“当前知识库中未找到相关信息”。
 
-        prompt = f"""
-你是一名知识助手，请严格根据下面的知识回答问题。
-
-[知识]
+[上下文]
 {context}
 
 [问题]
-{query}
+{question}
 
-请给出简洁、准确的回答。
+请给出准确、简洁的回答。
 """
-        print("prompt=>", prompt)
-        res = self.llm.invoke(prompt)
-        return res.content
+        )
+
+        # LCEL Pipeline： retriever → prompt → LLM → parser
+        chain = (
+            {
+                "context": self.retriever
+                | (lambda docs: "\n\n".join(d.page_content for d in docs)),
+                "question": lambda x: x,
+            }
+            | prompt
+            | self.llm
+            | StrOutputParser()
+        )
+
+        # 执行 LCEL
+        answer = chain.invoke(query)
+        return answer
