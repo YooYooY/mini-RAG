@@ -1,11 +1,41 @@
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from fastapi import FastAPI
-from src.api.router import api_router
-from src.rag.service import RagService
+from pydantic import BaseModel
+from typing import Optional, List
 
-app = FastAPI(title="Mini RAG API")
+from src.agent import run_agent
 
-# 初始化 RagService → 单例，全局共享
-app.state.rag = RagService()
+app = FastAPI()
 
-# 注册路由
-app.include_router(api_router, prefix="/api")
+
+# -----------------------------
+# Request / Response schemas
+# -----------------------------
+class AgentRequest(BaseModel):
+    query: str
+    image_url: Optional[str] = None
+
+
+class AgentResponse(BaseModel):
+    answer: str
+    used_tools: List[str]
+    status: str = "ok"
+
+
+# -----------------------------
+# API endpoint
+# -----------------------------
+@app.post("/agent/ask", response_model=AgentResponse)
+def ask_agent(req: AgentRequest):
+    answer, used_tools = run_agent(
+        query=req.query,
+        image_url=req.image_url,
+    )
+
+    return AgentResponse(
+        answer=answer,
+        used_tools=used_tools,
+    )
