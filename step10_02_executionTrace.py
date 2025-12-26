@@ -168,5 +168,6 @@ if __name__ == "__main__":
     print(memory_store[task_id])
 
     print("\n=== Execution Trace ===")
+
     for step in memory_store[task_id]["execution_trace"]:
         print(step)
