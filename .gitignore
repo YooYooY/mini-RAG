@@ -16,6 +16,7 @@ data/cache/
 data/*
 *.log
 chroma_db
+checkpoints
 
 # Mac
 .DS_Store
