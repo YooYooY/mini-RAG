@@ -237,9 +237,6 @@ def _run_llm_critic(payload: dict) -> CriticResult:
     resp = llm_critic.invoke(prompt)
     content = resp.content.strip()
 
-    print("=====> prompt", prompt)
-    print("-----> resp", resp)
-
     # 尝试解析 JSON，失败就 fallback
     try:
         data = json.loads(content)
