@@ -4,13 +4,15 @@ from core.checkpoint import save_checkpoint
 from core.types import TaskState, RetrievalContext
 from .vector_store_chroma import vector_index
 
-
 def retriever_node(state: TaskState) -> TaskState:
     task_id = state["task_id"]
     task_memory = memory_store[task_id]
 
     query = state["user_query"]
     hits = vector_index.search(query, k=3)
+
+    print("query=>", query)
+    print("hits=>", hits)
 
     retrieval_context: RetrievalContext = {
         "query": query,
