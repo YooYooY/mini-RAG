@@ -21,7 +21,7 @@ def executor_node(state: TaskState) -> TaskState:
         hits=hits,
     )
 
-    # print("compressed_evidence=>", compressed_evidence)
+    print("compressed_evidence=>", compressed_evidence)
 
     # 2) 基于压缩后的 evidence 生成最终回答
     answer = generate_answer(
@@ -31,13 +31,12 @@ def executor_node(state: TaskState) -> TaskState:
         hits=hits,
     )
 
-    # print("answer=>", answer)
+    print("answer=>", answer)
 
     state["answer"] = answer
 
     next_step = "critic_node"
 
-    # 3) 写入 trace（记录 evidence 使用情况）
     append_trace(
         task_id=task_id,
         step="executor_node",

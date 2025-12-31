@@ -1,13 +1,10 @@
 from typing import List, Dict
 from langchain_openai import ChatOpenAI
 
-
-# 可以用便宜一点的模型，先保证可用性
 llm = ChatOpenAI(
     model="gpt-4.1-mini",
     temperature=0.2,
 )
-
 
 def _format_evidence_for_llm(hits: List[Dict]) -> str:
     """

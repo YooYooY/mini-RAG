@@ -4,12 +4,9 @@ from typing import TypedDict, Optional, List, Dict, Literal
 class IntentContext(TypedDict, total=False):
     topic: str
     intent: str
-    task_plan: List[str]
-
 
 class RetrievalContext(TypedDict, total=False):
     query: str
-    doc_scope: List[str]
     retriever_hits: List[Dict]
 
 

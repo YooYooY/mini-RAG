@@ -9,3 +9,19 @@
 | Nodes               | 单一职责                        |
 | Graph               | 结构清晰                        |
 | 后续维护                | ⭐ 极大增强                      |
+
+
+```
+retriever → executor → critic
+        ↓
+     revise
+        ↓
+ critic: query_rewrite
+        ↓
+ retriever(retry with new query)
+        ↓
+ executor
+        ↓
+ critic → pass / fail
+
+```
